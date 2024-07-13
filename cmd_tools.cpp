@@ -8,6 +8,9 @@ using namespace std;
 
 int main()
 {
+#ifdef __linux__
+    cout << "Hello CMake." << endl;
+#elif _WIN32
     const char* adapterName = "Realtek Gaming 2.5GbE Family Controller"; // 替换为实际网卡名称
     NetworkInfo netInfo;
     int numAdapters;
@@ -33,6 +36,6 @@ int main()
         std::cerr << "Failed to get network adapter information." << std::endl;
     }
 	cout << "Hello CMake." << endl;
-
+#endif // __linux__
 	return 0;
 }
