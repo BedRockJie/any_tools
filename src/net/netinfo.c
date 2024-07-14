@@ -79,7 +79,7 @@ int getAdapterInfo(const char* adapterName, NetworkInfo* netInfo)
 
 
 
-int printAllAdapterNames() 
+int printAllAdapterNames()
 {
 #ifdef _WIN32
     PIP_ADAPTER_INFO pAdapterInfo;
