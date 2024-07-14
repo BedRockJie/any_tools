@@ -17,7 +17,8 @@ extern "C" {
     int printAllAdapterNames();
     char** getAllAdapterNames(int* numAdapters);
     void freeAdapterNames(char** adapterNames, int numAdapters);
-    
+    int device_info(int argc, const char** argv);
+
 #ifdef __cplusplus
 }
 #endif
