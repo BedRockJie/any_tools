@@ -18,10 +18,18 @@
 
 #endif // __linux__
 
+// Public common function
+void printNetworkInfo(NetworkInfo* netInfo) {
+    printf("Adapter Name: %s\n", netInfo->adapterName);
+    printf("IP Address: %s\n", netInfo->ipAddress);
+    printf("Subnet Mask: %s\n", netInfo->subnetMask);
+    printf("Gateway: %s\n", netInfo->gateway);
+}
 
-#ifdef _WIN32
+
 int getAdapterInfo(const char* adapterName, NetworkInfo* netInfo) 
 {
+#ifdef _WIN32
     PIP_ADAPTER_INFO pAdapterInfo;
     PIP_ADAPTER_INFO pAdapter = NULL;
     DWORD dwRetVal = 0;
@@ -65,18 +73,15 @@ int getAdapterInfo(const char* adapterName, NetworkInfo* netInfo)
     printf("Adapter '%s' not found\n", adapterName);
     if (pAdapterInfo)
         free(pAdapterInfo);
+#endif // _WIN32
     return 1;
 }
 
-void printNetworkInfo(NetworkInfo* netInfo) {
-    printf("Adapter Name: %s\n", netInfo->adapterName);
-    printf("IP Address: %s\n", netInfo->ipAddress);
-    printf("Subnet Mask: %s\n", netInfo->subnetMask);
-    printf("Gateway: %s\n", netInfo->gateway);
-}
+
 
 int printAllAdapterNames() 
 {
+#ifdef _WIN32
     PIP_ADAPTER_INFO pAdapterInfo;
     PIP_ADAPTER_INFO pAdapter = NULL;
     DWORD dwRetVal = 0;
@@ -114,12 +119,14 @@ int printAllAdapterNames()
 
     if (pAdapterInfo)
         free(pAdapterInfo);
-
+#endif // _WIN32
     return 0;
+
 }
 
 char** getAllAdapterNames(int* numAdapters)
 {
+#ifdef _WIN32
     PIP_ADAPTER_INFO pAdapterInfo;
     PIP_ADAPTER_INFO pAdapter = NULL;
     DWORD dwRetVal = 0;
@@ -192,16 +199,52 @@ char** getAllAdapterNames(int* numAdapters)
         free(pAdapterInfo);
 
     return adapterNames;
+#endif // _WIN32
+    return NULL;
 }
 
 void freeAdapterNames(char** adapterNames, int numAdapters)
 {
+#ifdef _WIN32
     for (int i = 0; i < numAdapters; i++) {
         free(adapterNames[i]);
     }
     free(adapterNames);
-}
 #endif // _WIN32
+}
+int device_info(int argc, const char** argv)
+{
+#ifdef _WIN32
+    printf("device Info Function\n");
+    const char* adapterName = "Realtek Gaming 2.5GbE Family Controller"; // 替换为实际网卡名称
+    NetworkInfo netInfo;
+    int numAdapters;
+    char** adapterNames = getAllAdapterNames(&numAdapters);
+
+    if (adapterNames != NULL) {
+        printf("Found %d network adapters:\n", numAdapters);
+        for (int i = 0; i < numAdapters; i++) {
+            printf("%d. %s\n", i + 1, adapterNames[i]);
+        }
+        freeAdapterNames(adapterNames, numAdapters);
+    }
+    else {
+        printf("Failed to retrieve network adapter information.\n");
+    }
+
+    printAllAdapterNames();
+
+    if (getAdapterInfo(adapterName, &netInfo) == 0) {
+        printNetworkInfo(&netInfo);
+    }
+    else {
+        printf("Failed to get network adapter information.");
+    }
+#endif // _WIN32
+    return 0;
+}
+
+
 
 #ifdef __linux__
 
