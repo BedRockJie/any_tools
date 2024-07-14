@@ -17,13 +17,30 @@ add_subdirectory(lib)
 # 添加源码目录到项目
 add_subdirectory(src)
 
+# 添加gtest到项目
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/4b21f1abddaf7d28388d7430bab69a81eccb1909.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # 添加头文件信息，包含到源码级别即可
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/argparse)
 
 list(APPEND SOURCES ${NEW_SOURCES})
-message("All source files: ${NEW_SOURCES}")
+# message("All source files: ${NEW_SOURCES}")
 message("All source files: ${SOURCES}")
+
+# 添加测试框架到项目
+include(CTest)
+enable_testing()
+add_subdirectory(test)
+
 
 # 将源代码添加到此项目的可执行文件。
 add_executable (cmd_tools "cmd_tools.cpp" ${SOURCES})
